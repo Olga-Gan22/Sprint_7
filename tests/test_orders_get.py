@@ -47,7 +47,7 @@ def test_get_order_success(courier_with_order):
         order_body = body["order"]
         track_in_response = order_body.get("track")
 
-        # Приводим к строке для безопасного сравнения (на случай, если API отдаёт track как строку/число)
+
         assert str(track_in_response) == str(order_id), (
             f"Track в ответе не совпадает с запрошенным. Ожидался {order_id}, "
             f"получен {track_in_response}. Ответ: {body}"

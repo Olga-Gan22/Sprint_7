@@ -62,7 +62,6 @@ class TestCourierDelete:
 
         @allure.step("Проверяем формат JSON-ответа и наличие поля 'message'")
         def step_check_message_field():
-            # Если сервер не отдаёт JSON — тест упадёт здесь, и это правильно: нарушена спецификация
             body = response.json()
             assert "message" in body, "При статусе 404 в ответе должно быть поле 'message'"
             expected_msg = "Курьера с таким id нет"

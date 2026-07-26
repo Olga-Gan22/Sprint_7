@@ -1,6 +1,5 @@
 """создание заказа"""
 
-# tests/test_create_order.py
 import allure
 import pytest
 from data.creating_data import Colors
@@ -35,11 +34,7 @@ class TestCreateOrder:
         step_check_no_color()
 
     @allure.title("Создание заказа с параметром color: цвет совпадает и track присутствует")
-    @pytest.mark.parametrize("color_value", [
-        Colors.BLACK,
-        Colors.GREY,
-        # Colors.RED,  <-- Раскомментируй, только если RED реально есть в data/creating_data.py
-    ])
+    @pytest.mark.parametrize("color_value", [Colors.BLACK, Colors.GREY])
     @pytest.mark.xfail(
         reason="Стенд возвращает 500 (values.map is not a function) при создании заказа с параметром color. "
                "Это проблема бэкенда стенда, а не теста.",
@@ -48,13 +43,7 @@ class TestCreateOrder:
     def test_create_order_with_color(self, color_value, create_order_with_color):
         response = create_order_with_color["response"]
         payload = create_order_with_color["payload"]
-
-        # Даже если стенд сломан, мы всё равно делаем json(), чтобы увидеть тело ошибки в логах
-        try:
-            body = response.json()
-        except Exception:
-            # Если ответ не JSON (редко, но бывает при 500), не ломаем тест раньше времени
-            body = {}
+        body = response.json()
 
         @allure.step(f"Проверяем статус 201 для заказа с цветом {color_value}")
         def step_check_status():
@@ -75,7 +64,7 @@ class TestCreateOrder:
             )
 
         step_check_status()
-        # Дальше не имеет смысла проверять track и цвет, если статус уже 500, но шаги остаются для наглядности в Allure
+
         if response.status_code == 201:
             step_check_track()
             step_check_color()

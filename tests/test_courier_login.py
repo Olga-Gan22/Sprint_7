@@ -39,7 +39,6 @@ class TestCourierLogin:
     def test_login_without_required_fields(self, courier_payload):
         payload_missing = {
             "login": courier_payload["login"],
-            # password намеренно не передаём
         }
         headers = {"Content-Type": "application/json"}
 

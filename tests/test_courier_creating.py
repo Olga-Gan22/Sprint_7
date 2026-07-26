@@ -1,6 +1,5 @@
 """Создание курьера"""
 
-# tests/test_courier_creating.py
 import allure
 import requests
 from data.creating_data import Url, ResponseMesseges
