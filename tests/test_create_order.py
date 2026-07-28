@@ -65,8 +65,6 @@ class TestCreateOrder:
                 f"Цвет в payload ({payload['color']}) не совпадает с переданным ({color_value})"
             )
 
-        # Убрали условие if: теперь все проверки идут строго по порядку.
-        # Если статус не 201 — тест падает здесь и дальше не идёт.
         step_check_status()
         step_check_track()
         step_check_color()

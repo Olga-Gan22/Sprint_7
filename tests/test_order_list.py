@@ -89,7 +89,6 @@ class TestOrdersList:
 
         @allure.step("Проверяем статус 200 и структуру ответа")
         def step_check_response():
-            # Самое важное: в сообщении assert теперь будет видно и статус, и тело ответа
             assert response.status_code == 200, (
                 f"Для валидного courierId ожидался 200, но получен {response.status_code}. "
                 f"Тело ответа: {response.text}"

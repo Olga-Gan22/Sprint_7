@@ -68,10 +68,10 @@ class TestCreatingCourier:
     @allure.feature("Couriers API")
     @allure.story("Создание курьера")
     @allure.title("Отсутствие обязательных полей: статус 400 и сообщение об ошибке")
-    def test_missing_required_fields(self):  # <-- убрали courier_payload из аргументов
-        # Берем данные напрямую из helpers, чтобы не зависеть от фикстуры
+    def test_missing_required_fields(self):  
+    
         base_payload = get_courier_payload()
-        bad_payload = {"login": base_payload["login"]}  # Только логин, остальное удаляем
+        bad_payload = {"login": base_payload["login"]} 
 
         @allure.step("Отправка запроса без password и firstName")
         def step_send_bad():
