@@ -1,0 +1,1 @@
+{"uuid": "2af0c3df-9bda-4b1e-8e50-4ce24bcb98f4", "children": ["08e07a9d-1076-484b-a23f-fc9a16356b57"], "befores": [{"name": "create_order_with_color", "status": "passed", "start": 1785276248882, "stop": 1785276249780}], "afters": [{"name": "create_order_with_color::<lambda>", "start": 1785276249800}], "start": 1785276248882, "stop": 1785276249800}
