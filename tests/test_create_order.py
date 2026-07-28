@@ -4,6 +4,7 @@ import allure
 import pytest
 from data.creating_data import Colors
 
+
 @allure.feature("Orders API")
 @allure.story("Создание заказа")
 class TestCreateOrder:
@@ -29,6 +30,7 @@ class TestCreateOrder:
         def step_check_no_color():
             assert "color" not in payload, "Цвет не должен быть в payload, если не передавался"
 
+        # Все шаги вызываются подряд. Если step_check_status падает — тест падает сразу.
         step_check_status()
         step_check_track()
         step_check_no_color()
@@ -63,8 +65,8 @@ class TestCreateOrder:
                 f"Цвет в payload ({payload['color']}) не совпадает с переданным ({color_value})"
             )
 
+        # Убрали условие if: теперь все проверки идут строго по порядку.
+        # Если статус не 201 — тест падает здесь и дальше не идёт.
         step_check_status()
-
-        if response.status_code == 201:
-            step_check_track()
-            step_check_color()
+        step_check_track()
+        step_check_color()

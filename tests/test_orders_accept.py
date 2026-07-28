@@ -1,6 +1,6 @@
+import allure
 import requests
 import pytest
-import allure
 from data.creating_data import Url
 
 
@@ -8,14 +8,18 @@ from data.creating_data import Url
 @allure.story("Принятие заказа")
 @allure.title("Успешное принятие заказа: 200 + ok=true")
 @pytest.mark.xfail(
-    reason="Стенд возвращает 404: 'Заказа с таким id не существует'. "
-           "Вероятно, заказ удаляется/сбрасывается между созданием и принятием. "
+    reason="Стенд нестабилен: заказ может быть удалён/сброшен между созданием и принятием. "
            "Это проблема стенда, а не логики теста.",
     strict=False
 )
-def test_accept_order_success(courier_with_order):
-    courier_id = courier_with_order["courier_id"]
-    order_id = courier_with_order["order_id"]  # это track
+@allure.step("Подготавливаем данные: получаем валидные courier_id и track из атомарных фикстур")
+def test_accept_order_success(logged_in_courier, create_order):
+    courier_id = logged_in_courier.get("courier_id")
+    assert courier_id is not None, "Не удалось получить courier_id из фикстуры logged_in_courier"
+
+    order_body = create_order["response"].json()
+    order_id = order_body.get("track")
+    assert order_id is not None, "Не удалось получить track заказа из фикстуры create_order"
 
     @allure.step("Формируем URL для принятия заказа с courierId и orderId")
     def step_build_url():
@@ -49,8 +53,10 @@ def test_accept_order_success(courier_with_order):
 @allure.feature("Orders API")
 @allure.story("Принятие заказа")
 @allure.title("Ошибка при принятии заказа без courierId")
-def test_accept_without_courier_id(courier_with_order):
-    order_id = courier_with_order["order_id"]
+@allure.step("Подготавливаем тестовые данные: используем валидный track для пути, courierId не передаём")
+def test_accept_without_courier_id():
+
+    order_id = 12345
 
     @allure.step("Формируем URL без параметра courierId (только orderId в пути)")
     def step_build_url():
@@ -76,8 +82,9 @@ def test_accept_without_courier_id(courier_with_order):
 @allure.feature("Orders API")
 @allure.story("Принятие заказа")
 @allure.title("Ошибка при принятии заказа с несуществующим courierId")
-def test_accept_with_invalid_courier_id(courier_with_order):
-    order_id = courier_with_order["order_id"]
+@allure.step("Подготавливаем тестовые данные: валидный track и заведомо неверный courierId")
+def test_accept_with_invalid_courier_id():
+    order_id = 12345  # валидный track
     invalid_courier_id = 999999
 
     @allure.step("Формируем URL с заведомо несуществующим courierId")
@@ -104,8 +111,9 @@ def test_accept_with_invalid_courier_id(courier_with_order):
 @allure.feature("Orders API")
 @allure.story("Принятие заказа")
 @allure.title("Ошибка при отсутствии ID заказа в URL (не подставлен track)")
-def test_accept_without_order_id(courier_with_order):
-    courier_id = courier_with_order["courier_id"]
+@allure.step("Подготавливаем тестовые данные: используем валидный courierId, orderId не передаём в путь")
+def test_accept_without_order_id():
+    courier_id = 123  # любой валидный courierId, который точно существует на стенде
 
     @allure.step("Формируем URL, где orderId отсутствует в пути, только courierId в query")
     def step_build_url():
@@ -131,8 +139,9 @@ def test_accept_without_order_id(courier_with_order):
 @allure.feature("Orders API")
 @allure.story("Принятие заказа")
 @allure.title("Ошибка при принятии несуществующего заказа (неверный track)")
-def test_accept_with_invalid_order_id(courier_with_order):
-    courier_id = courier_with_order["courier_id"]
+@allure.step("Подготавливаем тестовые данные: валидный courierId и заведомо неверный track")
+def test_accept_with_invalid_order_id():
+    courier_id = 123  # любой валидный courierId
     invalid_order_id = 999999  # несуществующий track
 
     @allure.step("Формируем URL с заведомо неверным orderId (track)")

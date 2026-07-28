@@ -4,7 +4,8 @@ import requests
 import allure
 import pytest
 from data.creating_data import Url, ResponseMesseges
-from conftest import courier_payload, created_courier, logged_in_courier
+from conftest import created_courier, logged_in_courier
+from helpers import get_courier_payload
 
 
 class TestCourierLogin:
@@ -36,9 +37,12 @@ class TestCourierLogin:
                "Это проблема стенда, а не логики теста.",
         strict=False
     )
-    def test_login_without_required_fields(self, courier_payload):
+    def test_login_without_required_fields(self):
+      
+        payload_base = get_courier_payload()
         payload_missing = {
-            "login": courier_payload["login"],
+            "login": payload_base["login"],
+        
         }
         headers = {"Content-Type": "application/json"}
 

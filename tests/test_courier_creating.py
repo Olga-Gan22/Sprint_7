@@ -3,6 +3,8 @@
 import allure
 import requests
 from data.creating_data import Url, ResponseMesseges
+from helpers import get_courier_payload  # <-- добавили этот импорт
+
 
 class TestCreatingCourier:
 
@@ -46,6 +48,7 @@ class TestCreatingCourier:
             return requests.post(
                 f"{Url.MAIN_URL}{Url.CREATING_COURIER}",
                 json=duplicate_payload,
+                headers={"Content-Type": "application/json"},
             )
 
         @allure.step("Проверка ответа: статус 409 и корректное сообщение")
@@ -65,14 +68,17 @@ class TestCreatingCourier:
     @allure.feature("Couriers API")
     @allure.story("Создание курьера")
     @allure.title("Отсутствие обязательных полей: статус 400 и сообщение об ошибке")
-    def test_missing_required_fields(self, courier_payload):
-        bad_payload = {"login": courier_payload["login"]}
+    def test_missing_required_fields(self):  # <-- убрали courier_payload из аргументов
+        # Берем данные напрямую из helpers, чтобы не зависеть от фикстуры
+        base_payload = get_courier_payload()
+        bad_payload = {"login": base_payload["login"]}  # Только логин, остальное удаляем
 
         @allure.step("Отправка запроса без password и firstName")
         def step_send_bad():
             return requests.post(
                 f"{Url.MAIN_URL}{Url.CREATING_COURIER}",
                 json=bad_payload,
+                headers={"Content-Type": "application/json"},
             )
 
         @allure.step("Проверка ответа: статус 400 и сообщение")
